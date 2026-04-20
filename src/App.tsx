@@ -16,7 +16,9 @@ import {
   Search,
   Download,
   Terminal,
-  Activity
+  Activity,
+  ShieldCheck,
+  Network
 } from 'lucide-react';
 import { 
   BarChart, 
@@ -240,10 +242,10 @@ export default function App() {
             <div className="p-6 border border-slate-100 bg-slate-50 rounded-sm">
               <h4 className="text-xs font-black uppercase text-blue-600 mb-4">Core Entities & Attributes</h4>
               <ul className="text-xs space-y-4 text-slate-600">
-                <li><span className="font-bold text-slate-900">Customers:</span> Name, Unique Email (UK), Phone, JoinDate, Status.</li>
-                <li><span className="font-bold text-slate-900">Instructors:</span> Name, Specialty/Style, Email, HireDate.</li>
-                <li><span className="font-bold text-slate-900">DanceClasses:</span> Name, Style, Level (Enum), MaxCapacity, PricePerSession.</li>
-                <li><span className="font-bold text-slate-900">Enrollments:</span> Relation mapping junction with Status (Enrolled/Cancelled).</li>
+                <li><span className="font-bold text-slate-900">Customers:</span> PK(ID), Names, Unique Email, JoinDate.</li>
+                <li><span className="font-bold text-slate-900">Instructors:</span> PK(ID), Names, Specialty.</li>
+                <li><span className="font-bold text-slate-900">DanceClasses:</span> PK(ID), FK(Instructor), Style, Capacity, Price.</li>
+                <li><span className="font-bold text-slate-900">Enrollments:</span> PK(ID), FK(Cust, Class), EnrollmentDate, Status.</li>
               </ul>
             </div>
             <div className="p-6 border border-slate-100 bg-slate-50 rounded-sm">
@@ -286,90 +288,118 @@ export default function App() {
         </div>
       </div>
 
-      {/* Visual ERD Diagram Section */}
       <div className="bg-slate-900 p-8 rounded-sm shadow-2xl border border-slate-800">
         <div className="flex items-center justify-between mb-8">
-          <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-white/40">Visual Entity Relationship Diagram</h3>
-          <span className="text-[10px] text-blue-400 font-mono tracking-widest bg-blue-500/10 px-2 py-1 rounded">CROW'S FOOT NOTATION (VIRTUAL)</span>
+          <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-white/40">Visual Architecture Map</h3>
+          <span className="text-[10px] text-blue-400 font-mono tracking-widest bg-blue-500/10 px-2 py-1 rounded">LOGICAL DESIGN (NORMALIZED)</span>
         </div>
-        <div className="grid grid-cols-3 gap-y-12 gap-x-8">
-          {/* Entity Node: Customers */}
-          <div className="bg-white/5 border border-white/10 p-4 rounded-sm hover:border-blue-500 transition-colors">
-            <div className="bg-blue-500 text-[10px] font-black text-white px-2 py-1 uppercase rounded-sm mb-3">Customers</div>
-            <div className="font-mono text-[10px] space-y-1.5 text-white/60">
-              <div className="text-blue-400">PK: CustomerID</div>
-              <div>FirstName</div>
-              <div>LastName</div>
-              <div className="italic">Email (UK)</div>
-              <div>Phone</div>
+        
+        <div className="grid grid-cols-3 gap-y-12 gap-x-8 relative">
+          {/* Row 1: Instructors & DanceClasses */}
+          
+          <div className="bg-white/5 border border-white/10 p-4 rounded-sm hover:border-purple-500 transition-colors shadow-xl">
+            <div className="bg-purple-600 text-[10px] font-black text-white px-2 py-1 uppercase rounded-sm mb-3">Instructors</div>
+            <div className="font-mono text-[9px] space-y-1.5 text-white/60">
+              <div className="text-blue-400 flex justify-between"><span>PK: InstructorID</span> <span className="opacity-50">INT</span></div>
+              <div className="flex justify-between"><span>FirstName</span> <span className="opacity-30">VC(50)</span></div>
+              <div className="flex justify-between"><span>LastName</span> <span className="opacity-30">VC(50)</span></div>
+              <div className="flex justify-between italic"><span>Specialty</span> <span className="opacity-30">VC(50)</span></div>
             </div>
           </div>
 
           <div className="flex items-center justify-center opacity-30">
             <div className="h-[1px] w-full bg-white/20 relative">
-              <div className="absolute right-0 -top-1.5 text-xs">⟷</div>
+              <div className="absolute right-0 -top-1.5 text-xs text-white">1:N</div>
             </div>
           </div>
 
-          {/* Entity Node: Enrollments */}
-          <div className="bg-white/5 border border-white/10 p-4 rounded-sm hover:border-blue-500 transition-colors relative">
-            <div className="bg-slate-700 text-[10px] font-black text-white px-2 py-1 uppercase rounded-sm mb-3">Enrollments (Junction)</div>
-            <div className="font-mono text-[10px] space-y-1.5 text-white/60">
-              <div className="text-blue-400">PK: EnrollmentID</div>
-              <div className="text-yellow-400">FK: CustomerID</div>
-              <div className="text-yellow-400">FK: ClassID</div>
-              <div>EnrollDate</div>
-              <div>Status</div>
+          <div className="bg-white/5 border border-white/10 p-4 rounded-sm hover:border-purple-500 transition-colors shadow-xl">
+            <div className="bg-purple-800 text-[10px] font-black text-white px-2 py-1 uppercase rounded-sm mb-3">DanceClasses</div>
+            <div className="font-mono text-[9px] space-y-1.5 text-white/60">
+              <div className="text-blue-400 flex justify-between"><span>PK: ClassID</span> <span className="opacity-50">INT</span></div>
+              <div className="text-yellow-400 flex justify-between"><span>FK: InstructorID</span> <span className="opacity-50">INT</span></div>
+              <div className="flex justify-between"><span>ClassName</span> <span className="opacity-30">VC(100)</span></div>
+              <div className="flex justify-between"><span>Style</span> <span className="opacity-30">VC(50)</span></div>
+              <div className="flex justify-between"><span>MaxCapacity</span> <span className="opacity-50">INT</span></div>
+              <div className="flex justify-between"><span>PricePerSession</span> <span className="opacity-40">DEC</span></div>
             </div>
           </div>
 
-          {/* Entity Node: DanceClasses */}
-          <div className="bg-white/5 border border-white/10 p-4 rounded-sm hover:border-blue-500 transition-colors">
-            <div className="bg-purple-600 text-[10px] font-black text-white px-2 py-1 uppercase rounded-sm mb-3">DanceClasses</div>
-            <div className="font-mono text-[10px] space-y-1.5 text-white/60">
-              <div className="text-blue-400">PK: ClassID</div>
-              <div className="text-yellow-400">FK: InstructorID</div>
-              <div>Name</div>
-              <div>Style</div>
-              <div>Price</div>
+          {/* Connectors */}
+          <div className="col-span-2" />
+          <div className="flex items-center justify-center opacity-30">
+            <div className="w-[1px] h-12 bg-white/20 relative">
+               <div className="absolute top-0 -left-1.5 text-xs rotate-90 text-white font-mono">1:N</div>
             </div>
           </div>
 
-          <div className="flex items-center justify-center opacity-30 pt-6">
-            <div className="w-[1px] h-20 bg-white/20 relative">
-               <div className="absolute top-0 -left-1.5 text-xs rotate-90">⟷</div>
-            </div>
-          </div>
+          {/* Row 2: Payments & Customers & Enrollments */}
 
-          <div className="col-span-1" /> {/* Spacer */}
-
-          <div className="flex items-center justify-center opacity-30 pt-6">
-            <div className="w-[1px] h-20 bg-white/20 relative">
-               <div className="absolute top-0 -left-1.5 text-xs rotate-90">⟷</div>
-            </div>
-          </div>
-
-          {/* Entity Node: Payments */}
-          <div className="bg-white/5 border border-white/10 p-4 rounded-sm hover:border-blue-500 transition-colors">
+          <div className="bg-white/5 border border-white/10 p-4 rounded-sm hover:border-green-500 transition-colors shadow-xl">
             <div className="bg-green-600 text-[10px] font-black text-white px-2 py-1 uppercase rounded-sm mb-3">Payments</div>
-            <div className="font-mono text-[10px] space-y-1.5 text-white/60">
-              <div className="text-blue-400">PK: PaymentID</div>
-              <div className="text-yellow-400">FK: CustomerID</div>
-              <div>Amount</div>
-              <div>Date</div>
+            <div className="font-mono text-[9px] space-y-1.5 text-white/60">
+              <div className="text-blue-400 flex justify-between"><span>PK: PaymentID</span> <span className="opacity-50">INT</span></div>
+              <div className="text-yellow-400 flex justify-between"><span>FK: CustomerID</span> <span className="opacity-50">INT</span></div>
+              <div className="flex justify-between"><span>Amount</span> <span className="opacity-40">DEC</span></div>
+              <div className="flex justify-between"><span>PaymentDate</span> <span className="opacity-30">DATE</span></div>
             </div>
           </div>
 
-          <div className="col-span-1" /> {/* Spacer */}
+          <div className="flex items-center justify-center opacity-30">
+            <div className="h-[1px] w-full bg-white/20 relative">
+              <div className="absolute left-0 -top-1.5 text-xs text-white">N:1</div>
+            </div>
+          </div>
 
-          {/* Entity Node: Attendance */}
-          <div className="bg-white/5 border border-white/10 p-4 rounded-sm hover:border-blue-500 transition-colors">
+          <div className="bg-white/5 border border-white/10 p-4 rounded-sm hover:border-blue-500 transition-colors shadow-xl relative">
+            <div className="bg-blue-600 text-[10px] font-black text-white px-2 py-1 uppercase rounded-sm mb-3">Customers</div>
+            <div className="font-mono text-[9px] space-y-1.5 text-white/60">
+              <div className="text-blue-400 flex justify-between"><span>PK: CustomerID</span> <span className="opacity-50">INT</span></div>
+              <div className="flex justify-between"><span>FirstName</span> <span className="opacity-30">VC(50)</span></div>
+              <div className="flex justify-between"><span>LastName</span> <span className="opacity-30">VC(50)</span></div>
+              <div className="flex justify-between italic"><span>Email (UK)</span> <span className="opacity-30">VC(100)</span></div>
+              <div className="flex justify-between"><span>JoinDate</span> <span className="opacity-30">DATE</span></div>
+            </div>
+            {/* Connector to above */}
+            <div className="absolute -top-12 left-1/2 w-[1px] h-12 bg-white/10" />
+            {/* Connector to below */}
+            <div className="absolute -bottom-12 left-1/2 w-[1px] h-12 bg-white/10" />
+          </div>
+
+          {/* Row 3 connectors */}
+          <div className="col-span-2" />
+          <div className="flex items-center justify-center opacity-30">
+            <div className="w-[1px] h-12 bg-white/20 relative">
+               <div className="absolute top-0 -left-1.5 text-xs rotate-90 text-white font-mono">1:N</div>
+            </div>
+          </div>
+
+          {/* Row 4: Attendance & Enrollments */}
+          
+          <div className="bg-white/5 border border-white/10 p-4 rounded-sm hover:border-orange-500 transition-colors shadow-xl">
             <div className="bg-orange-600 text-[10px] font-black text-white px-2 py-1 uppercase rounded-sm mb-3">Attendance</div>
-            <div className="font-mono text-[10px] space-y-1.5 text-white/60">
-              <div className="text-blue-400">PK: AttendanceID</div>
-              <div className="text-yellow-400">FK: EnrollmentID</div>
-              <div>ClassDate</div>
-              <div>IsPresent</div>
+            <div className="font-mono text-[9px] space-y-1.5 text-white/60">
+              <div className="text-blue-400 flex justify-between"><span>PK: AttendanceID</span> <span className="opacity-50">INT</span></div>
+              <div className="text-yellow-400 flex justify-between"><span>FK: EnrollmentID</span> <span className="opacity-50">INT</span></div>
+              <div className="flex justify-between"><span>ClassDate</span> <span className="opacity-30">DATE</span></div>
+              <div className="flex justify-between"><span>IsPresent</span> <span className="opacity-50">BOOL</span></div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center opacity-30">
+            <div className="h-[1px] w-full bg-white/20 relative">
+              <div className="absolute right-0 -top-1.5 text-xs text-white">N:1</div>
+            </div>
+          </div>
+
+          <div className="bg-white/5 border border-white/10 p-4 rounded-sm hover:border-slate-400 transition-colors relative shadow-xl">
+            <div className="bg-slate-700 text-[10px] font-black text-white px-2 py-1 uppercase rounded-sm mb-3">Enrollments</div>
+            <div className="font-mono text-[9px] space-y-1.5 text-white/60">
+              <div className="text-blue-400 flex justify-between"><span>PK: EnrollmentID</span> <span className="opacity-50">INT</span></div>
+              <div className="text-yellow-400 flex justify-between"><span>FK: CustomerID</span> <span className="opacity-50">INT</span></div>
+              <div className="text-yellow-400 flex justify-between"><span>FK: ClassID</span> <span className="opacity-50">INT</span></div>
+              <div className="flex justify-between"><span>EnrollmentDate</span> <span className="opacity-30">DATE</span></div>
+              <div className="flex justify-between"><span>Status</span> <span className="opacity-30">VC(20)</span></div>
             </div>
           </div>
         </div>
@@ -378,103 +408,145 @@ export default function App() {
   );
 
   const renderSchema = () => (
-    <div className="space-y-8">
+    <div className="space-y-12">
       <div className="flex items-center justify-between border-b border-slate-200 pb-6">
         <div>
-          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">Data Layer</h2>
+          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">Normalized Data Layer</h2>
           <h3 className="text-2xl font-black text-slate-900">Relational Schema</h3>
         </div>
-        <div className="flex gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="Filter entities..." 
-              className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-slate-900 transition-all w-64"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-            />
+        <div className="flex gap-3">
+          <div className="flex items-center gap-2 px-3 py-1 bg-slate-900 text-white text-[9px] font-black uppercase rounded shadow-sm border border-slate-800">
+            <Database className="w-3 h-3" /> InnoDB / UTF8MB4
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 text-[9px] font-black uppercase rounded border border-blue-200">
+            <Activity className="w-3 h-3" /> Integrity: ON
           </div>
         </div>
       </div>
-      
-      <div className="grid gap-12">
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-12">
+        {/* Table 1: Customers */}
         <div className="bg-white border border-slate-200 rounded-sm shadow-sm overflow-hidden">
           <div className="bg-slate-50 p-4 border-b border-slate-200 flex items-center justify-between">
-            <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
-              <Users className="w-4 h-4 text-slate-400" /> Customers
+            <h3 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-blue-600">
+              <Users className="w-4 h-4" /> [T] Customers
             </h3>
-            <button className="text-[10px] font-bold bg-slate-100 text-slate-600 px-3 py-1 rounded hover:bg-slate-200 transition-colors uppercase">Metadata View</button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-100 text-slate-500 font-bold text-[10px] uppercase">
-                <tr>
-                  {['Pk / Id', 'Student Name', 'Email Address', 'Phone', 'Enrollment', 'Status'].map(h => (
-                    <th key={h} className="p-4 tracking-wider">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {displayCustomers.filter(c => 
-                  `${c.firstName || c.FirstName} ${c.lastName || c.LastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  (c.email || c.Email || "").toLowerCase().includes(searchQuery.toLowerCase())
-                ).map(c => (
-                  <tr key={c.id || c.CustomerID} className="hover:bg-slate-50/80 transition-colors group">
-                    <td className="p-4 font-mono text-xs text-slate-400">{(c.id || c.CustomerID).toString().padStart(3, '0')}</td>
-                    <td className="p-4 font-bold text-slate-900">{c.firstName || c.FirstName} {c.lastName || c.LastName}</td>
-                    <td className="p-4 text-slate-500">{c.email || c.Email}</td>
-                    <td className="p-4 text-slate-500">{c.phone || c.Phone || "N/A"}</td>
-                    <td className="p-4 text-slate-500">{c.joinDate || c.JoinDate}</td>
-                    <td className="p-4">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
-                        (c.status || c.Status) === 'Active' || (c.status || c.Status) === 'Enrolled' ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-600'
-                      }`}>
-                        {c.status || c.Status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <table className="w-full text-left text-[11px] font-mono">
+            <thead className="bg-slate-100 text-slate-500 font-bold uppercase border-b border-slate-200">
+              <tr><th className="p-3">Attrib</th><th className="p-3">Type</th><th className="p-3 text-right">Const.</th></tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              <tr><td className="p-3 font-bold">CustomerID</td><td className="p-3 text-slate-400">INT</td><td className="p-3 text-right text-blue-600 font-bold">PK, AI</td></tr>
+              <tr><td className="p-3 font-bold">FirstName</td><td className="p-3 text-slate-400">VC(50)</td><td className="p-3 text-right">NOT NULL</td></tr>
+              <tr><td className="p-3 font-bold">LastName</td><td className="p-3 text-slate-400">VC(50)</td><td className="p-3 text-right">NOT NULL</td></tr>
+              <tr><td className="p-3 font-bold">Email</td><td className="p-3 text-slate-400">VC(100)</td><td className="p-3 text-right text-purple-600 font-bold">UNIQUE</td></tr>
+              <tr><td className="p-3 font-bold">JoinDate</td><td className="p-3 text-slate-400">DATE</td><td className="p-3 text-right">NOT NULL</td></tr>
+            </tbody>
+          </table>
         </div>
 
+        {/* Table 2: Instructors */}
         <div className="bg-white border border-slate-200 rounded-sm shadow-sm overflow-hidden">
           <div className="bg-slate-50 p-4 border-b border-slate-200 flex items-center justify-between">
-            <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-slate-400" /> Dance Sessions
+            <h3 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-purple-600">
+              <Users className="w-4 h-4" /> [T] Instructors
             </h3>
-            <button className="text-[10px] font-bold bg-slate-900 text-white px-3 py-1 rounded hover:bg-slate-800 transition-colors uppercase">New Session +</button>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-100 text-slate-500 font-bold text-[10px] uppercase">
-                <tr>
-                  {['Id', 'Class Title', 'Style', 'Tier', 'Lead Instructor', 'Rate'].map(h => (
-                    <th key={h} className="p-4 tracking-wider">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {displayClasses.filter(dc => 
-                  (dc.name || dc.ClassName || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  (dc.style || dc.Style || "").toLowerCase().includes(searchQuery.toLowerCase())
-                ).map(dc => (
-                  <tr key={dc.id || dc.ClassID} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="p-4 font-mono text-xs text-slate-400">{dc.id || dc.ClassID}</td>
-                    <td className="p-4 font-bold text-slate-900">{dc.name || dc.ClassName}</td>
-                    <td className="p-4 text-slate-500">{dc.style || dc.Style}</td>
-                    <td className="p-4">
-                      <span className="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold text-slate-600">{dc.level || dc.Level || "All Levels"}</span>
-                    </td>
-                    <td className="p-4 text-slate-500">{dc.instructor || `${dc.instructorFirst || ""} ${dc.instructorLast || ""}`}</td>
-                    <td className="p-4 font-mono font-bold text-slate-900">${(dc.price || dc.PricePerSession || 0).toFixed(2)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <table className="w-full text-left text-[11px] font-mono">
+            <thead className="bg-slate-100 text-slate-500 font-bold uppercase border-b border-slate-200">
+              <tr><th className="p-3">Attrib</th><th className="p-3">Type</th><th className="p-3 text-right">Const.</th></tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              <tr><td className="p-3 font-bold">InstructorID</td><td className="p-3 text-slate-400">INT</td><td className="p-3 text-right text-blue-600 font-bold">PK, AI</td></tr>
+              <tr><td className="p-3 font-bold">FirstName</td><td className="p-3 text-slate-400">VC(50)</td><td className="p-3 text-right">NOT NULL</td></tr>
+              <tr><td className="p-3 font-bold">LastName</td><td className="p-3 text-slate-400">VC(50)</td><td className="p-3 text-right">NOT NULL</td></tr>
+              <tr><td className="p-3 font-bold">Specialty</td><td className="p-3 text-slate-400">VC(50)</td><td className="p-3 text-right">NOT NULL</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Table 3: DanceClasses */}
+        <div className="bg-white border border-slate-200 rounded-sm shadow-sm overflow-hidden">
+          <div className="bg-slate-50 p-4 border-b border-slate-200 flex items-center justify-between">
+            <h3 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-slate-900">
+              <ShieldCheck className="w-4 h-4" /> [T] DanceClasses
+            </h3>
           </div>
+          <table className="w-full text-left text-[11px] font-mono">
+            <thead className="bg-slate-100 text-slate-500 font-bold uppercase border-b border-slate-200">
+              <tr><th className="p-3">Attrib</th><th className="p-3">Type</th><th className="p-3 text-right">Const.</th></tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              <tr><td className="p-3 font-bold">ClassID</td><td className="p-3 text-slate-400">INT</td><td className="p-3 text-right text-blue-600 font-bold">PK, AI</td></tr>
+              <tr><td className="p-3 font-bold">ClassName</td><td className="p-3 text-slate-400">VC(100)</td><td className="p-3 text-right">NOT NULL</td></tr>
+              <tr><td className="p-3 font-bold">Style</td><td className="p-3 text-slate-400">VC(50)</td><td className="p-3 text-right">NOT NULL</td></tr>
+              <tr><td className="p-3 font-bold">InstructorID</td><td className="p-3 text-slate-400">INT</td><td className="p-3 text-right text-yellow-600 font-bold">FK</td></tr>
+              <tr><td className="p-3 font-bold">MaxCapacity</td><td className="p-3 text-slate-400">INT</td><td className="p-3 text-right text-slate-400">DEF 20</td></tr>
+              <tr><td className="p-3 font-bold">PricePerSession</td><td className="p-3 text-slate-400">DEC(10,2)</td><td className="p-3 text-right">NOT NULL</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Table 4: Enrollments */}
+        <div className="bg-white border border-slate-200 rounded-sm shadow-sm overflow-hidden">
+          <div className="bg-slate-50 p-4 border-b border-slate-200 flex items-center justify-between">
+            <h3 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-slate-500">
+              <Network className="w-4 h-4" /> [T] Enrollments
+            </h3>
+          </div>
+          <table className="w-full text-left text-[11px] font-mono">
+            <thead className="bg-slate-100 text-slate-500 font-bold uppercase border-b border-slate-200">
+              <tr><th className="p-3">Attrib</th><th className="p-3">Type</th><th className="p-3 text-right">Const.</th></tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              <tr><td className="p-3 font-bold">EnrollmentID</td><td className="p-3 text-slate-400">INT</td><td className="p-3 text-right text-blue-600 font-bold">PK, AI</td></tr>
+              <tr><td className="p-3 font-bold">CustomerID</td><td className="p-3 text-slate-400">INT</td><td className="p-3 text-right text-yellow-600 font-bold">FK</td></tr>
+              <tr><td className="p-3 font-bold">ClassID</td><td className="p-3 text-slate-400">INT</td><td className="p-3 text-right text-yellow-600 font-bold">FK</td></tr>
+              <tr><td className="p-3 font-bold">EnrollmentDate</td><td className="p-3 text-slate-400">DATE</td><td className="p-3 text-right">NOT NULL</td></tr>
+              <tr><td className="p-3 font-bold">Status</td><td className="p-3 text-slate-400">VC(20)</td><td className="p-3 text-right italic">DEF 'Enrolled'</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Table 5: Payments */}
+        <div className="bg-white border border-slate-200 rounded-sm shadow-sm overflow-hidden">
+          <div className="bg-slate-50 p-4 border-b border-slate-200 flex items-center justify-between">
+            <h3 className="text-[10px] font-black uppercase tracking-widest flex items-center gap-2 text-green-600">
+              <CreditCard className="w-4 h-4" /> [T] Payments
+            </h3>
+          </div>
+          <table className="w-full text-left text-[11px] font-mono">
+            <thead className="bg-slate-100 text-slate-500 font-bold uppercase border-b border-slate-200">
+              <tr><th className="p-3">Attrib</th><th className="p-3">Type</th><th className="p-3 text-right">Const.</th></tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              <tr><td className="p-3 font-bold">PaymentID</td><td className="p-3 text-slate-400">INT</td><td className="p-3 text-right text-blue-600 font-bold">PK, AI</td></tr>
+              <tr><td className="p-3 font-bold">CustomerID</td><td className="p-3 text-slate-400">INT</td><td className="p-3 text-right text-yellow-600 font-bold">FK</td></tr>
+              <tr><td className="p-3 font-bold">Amount</td><td className="p-3 text-slate-400">DEC(10,2)</td><td className="p-3 text-right">NOT NULL</td></tr>
+              <tr><td className="p-3 font-bold">PaymentDate</td><td className="p-3 text-slate-400">DATE</td><td className="p-3 text-right">NOT NULL</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Table 6: Attendance */}
+        <div className="bg-white border border-slate-200 rounded-sm shadow-sm overflow-hidden">
+          <div className="bg-slate-50 p-4 border-b border-slate-200 flex items-center justify-between">
+            <h3 className="text-[10px] font-black uppercase tracking-wider flex items-center gap-2 text-orange-600">
+              <Activity className="w-4 h-4" /> [T] Attendance
+            </h3>
+          </div>
+          <table className="w-full text-left text-[11px] font-mono">
+            <thead className="bg-slate-100 text-slate-500 font-bold uppercase border-b border-slate-200">
+              <tr><th className="p-3">Attrib</th><th className="p-3">Type</th><th className="p-3 text-right">Const.</th></tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              <tr><td className="p-3 font-bold">AttendanceID</td><td className="p-3 text-slate-400">INT</td><td className="p-3 text-right text-blue-600 font-bold">PK, AI</td></tr>
+              <tr><td className="p-3 font-bold">EnrollmentID</td><td className="p-3 text-slate-400">INT</td><td className="p-3 text-right text-yellow-600 font-bold">FK</td></tr>
+              <tr><td className="p-3 font-bold">ClassDate</td><td className="p-3 text-slate-400">DATE</td><td className="p-3 text-right">NOT NULL</td></tr>
+              <tr><td className="p-3 font-bold">IsPresent</td><td className="p-3 text-slate-400">BOOL</td><td className="p-3 text-right italic">DEF 1</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
