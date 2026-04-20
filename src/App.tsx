@@ -35,7 +35,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 
 // Types
-type Tab = 'overview' | 'database' | 'analytics' | 'code' | 'sql' | 'report';
+type Tab = 'overview' | 'erd' | 'schema' | 'analytics' | 'code' | 'sql' | 'report';
 
 // Relationship Types
 interface ERDLink {
@@ -274,28 +274,19 @@ export default function App() {
     </div>
   );
 
-  const renderDatabase = () => (
+  const renderErd = () => (
     <div className="space-y-8">
       <div className="flex items-center justify-between border-b border-slate-200 pb-6">
         <div>
-          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">Data Layer</h2>
-          <h3 className="text-2xl font-black text-slate-900">Relational Schema & ERD</h3>
+          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">Architectural Layer</h2>
+          <h3 className="text-2xl font-black text-slate-900">Entity Relationship Diagram</h3>
         </div>
-        <div className="flex gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input 
-              type="text" 
-              placeholder="Filter entities..." 
-              className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-slate-900 transition-all w-64"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-            />
-          </div>
+        <div className="bg-blue-500/10 text-blue-600 px-3 py-1.5 rounded text-[10px] font-black uppercase tracking-widest border border-blue-200 flex items-center gap-2">
+          <Activity className="w-3 h-3" /> Crow's Foot Notation
         </div>
       </div>
 
-      {/* Visual ERD Diagram Section (Rubric Item 2a) */}
+      {/* Visual ERD Diagram Section */}
       <div className="bg-slate-900 p-8 rounded-sm shadow-2xl border border-slate-800">
         <div className="flex items-center justify-between mb-8">
           <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-white/40">Visual Entity Relationship Diagram</h3>
@@ -383,9 +374,31 @@ export default function App() {
           </div>
         </div>
       </div>
+    </div>
+  );
+
+  const renderSchema = () => (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-6">
+        <div>
+          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">Data Layer</h2>
+          <h3 className="text-2xl font-black text-slate-900">Relational Schema</h3>
+        </div>
+        <div className="flex gap-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input 
+              type="text" 
+              placeholder="Filter entities..." 
+              className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-slate-900 transition-all w-64"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
       
-      {/* Table grid below */}
-      <div className="grid gap-12 pt-8">
+      <div className="grid gap-12">
         <div className="bg-white border border-slate-200 rounded-sm shadow-sm overflow-hidden">
           <div className="bg-slate-50 p-4 border-b border-slate-200 flex items-center justify-between">
             <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
@@ -668,44 +681,87 @@ SELECT Style, COUNT(*) AS Headcount FROM DanceClasses dc JOIN Enrollments e ON d
   };
 
   const renderSql = () => (
-    <div className="flex h-[600px] gap-6">
-      <div className="w-64 space-y-2 shrink-0">
-        {(Object.keys(sqlFiles) as Array<keyof typeof sqlFiles>).map(key => (
-          <button
-            key={key}
-            onClick={() => setActiveSqlFile(key)}
-            className={`w-full text-left p-4 rounded transition-all border ${
-              activeSqlFile === key 
-                ? 'bg-slate-900 text-white border-slate-900 shadow-lg' 
-                : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
-            }`}
-          >
-            <p className="text-[9px] font-bold uppercase tracking-widest opacity-60 mb-1">SQL Asset</p>
-            <p className="text-xs font-bold truncate">{sqlFiles[key].name}</p>
-          </button>
-        ))}
+    <div className="flex flex-col gap-6">
+       <div className="bg-blue-900 p-6 rounded-sm border border-blue-800 text-white flex items-center justify-between">
+        <div>
+          <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-1">Architecture Reference</h4>
+          <p className="text-sm font-bold">Relational Schema and ERD are integrated for quick lookup.</p>
+        </div>
+        <div className="flex gap-2">
+           <button 
+            onClick={() => setActiveTab('erd')}
+            className="px-3 py-1.5 bg-blue-500/20 border border-blue-500/30 rounded text-[10px] font-bold uppercase hover:bg-blue-500 transition-all"
+           >
+            View Full ERD
+           </button>
+           <button 
+            onClick={() => setActiveTab('schema')}
+            className="px-3 py-1.5 bg-white/10 border border-white/10 rounded text-[10px] font-bold uppercase hover:bg-white/20 transition-all"
+           >
+            Manage Data
+           </button>
+        </div>
       </div>
-      <div className="flex-1 bg-slate-900 rounded shadow-2xl border border-slate-800 flex flex-col overflow-hidden">
-        <div className="p-4 border-b border-slate-800 bg-slate-950 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="flex gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-slate-800" />
-              <div className="w-2.5 h-2.5 rounded-full bg-slate-800" />
-              <div className="w-2.5 h-2.5 rounded-full bg-slate-800" />
-            </div>
-            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold border-l border-slate-800 pl-3">Live Console Tracer</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-[10px] font-mono text-blue-400">{sqlFiles[activeSqlFile as keyof typeof sqlFiles].name}</span>
-            <button className="text-slate-500 hover:text-white transition-colors">
-              <Download className="w-4 h-4" />
+
+      <div className="flex flex-col lg:flex-row h-[700px] gap-6">
+        <div className="w-full lg:w-64 space-y-2 shrink-0">
+          {(Object.keys(sqlFiles) as Array<keyof typeof sqlFiles>).map(key => (
+            <button
+              key={key}
+              onClick={() => setActiveSqlFile(key)}
+              className={`w-full text-left p-4 rounded transition-all border ${
+                activeSqlFile === key 
+                  ? 'bg-slate-900 text-white border-slate-900 shadow-lg' 
+                  : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
+              }`}
+            >
+              <p className="text-[9px] font-bold uppercase tracking-widest opacity-60 mb-1">SQL Asset</p>
+              <p className="text-xs font-bold truncate">{sqlFiles[key].name}</p>
             </button>
+          ))}
+          
+          <div className="pt-8 space-y-4 hidden lg:block">
+            <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 px-2">Table Glossary</h4>
+            <div className="space-y-1.5">
+              {[
+                { name: 'Customers', cols: 'ID, Name, Email, JoinDate' },
+                { name: 'Instructors', cols: 'ID, Name, Specialty' },
+                { name: 'DanceClasses', cols: 'ID, Name, Style, Cap, Price' },
+                { name: 'Enrollments', cols: 'ID, CustID, ClassID, Date, Status' },
+                { name: 'Payments', cols: 'ID, CustID, Amount, Date' },
+                { name: 'Attendance', cols: 'ID, EnrollID, Date, Present' }
+              ].map(table => (
+                <div key={table.name} className="p-2 border border-slate-200 bg-white rounded-sm">
+                  <p className="text-[10px] font-black text-slate-900 uppercase leading-none mb-1">{table.name}</p>
+                  <p className="text-[9px] text-slate-400 font-mono leading-none">{table.cols}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="flex-1 p-6 overflow-auto font-mono text-[11px] leading-relaxed custom-scrollbar">
-          <pre className="text-slate-300">
-            {sqlSnippets[activeSqlFile as keyof typeof sqlSnippets]}
-          </pre>
+
+        <div className="flex-1 bg-slate-900 rounded shadow-2xl border border-slate-800 flex flex-col overflow-hidden">
+          <div className="p-4 border-b border-slate-800 bg-slate-950 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-3">
+              <div className="flex gap-1.5">
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-800" />
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-800" />
+                <div className="w-2.5 h-2.5 rounded-full bg-slate-800" />
+              </div>
+              <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold border-l border-slate-800 pl-3">Live Console Tracer</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="text-[10px] font-mono text-blue-400">{sqlFiles[activeSqlFile as keyof typeof sqlFiles].name}</span>
+              <button className="text-slate-500 hover:text-white transition-colors">
+                <Download className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+          <div className="flex-1 p-6 overflow-auto font-mono text-[11px] leading-relaxed custom-scrollbar">
+            <pre className="text-slate-300">
+              {sqlSnippets[activeSqlFile as keyof typeof sqlSnippets]}
+            </pre>
+          </div>
         </div>
       </div>
     </div>
@@ -823,7 +879,8 @@ namespace RhythmDanceStudio {
           <div className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 px-2">Management</div>
           {[
             { id: 'overview', icon: Info, label: 'Overview' },
-            { id: 'database', icon: Database, label: 'Schema' },
+            { id: 'erd', icon: Activity, label: 'ERD' },
+            { id: 'schema', icon: Database, label: 'Relational Schema' },
             { id: 'analytics', icon: BarChart3, label: 'Analytics' },
             { id: 'report', icon: ChevronRight, label: 'Deliverable' },
           ].map(tab => (
@@ -930,7 +987,8 @@ namespace RhythmDanceStudio {
                 transition={{ duration: 0.2, ease: "easeOut" }}
               >
                 {activeTab === 'overview' && renderOverview()}
-                {activeTab === 'database' && renderDatabase()}
+                {activeTab === 'erd' && renderErd()}
+                {activeTab === 'schema' && renderSchema()}
                 {activeTab === 'analytics' && renderAnalytics()}
                 {activeTab === 'report' && renderReport()}
                 {activeTab === 'sql' && renderSql()}
