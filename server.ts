@@ -6,25 +6,29 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Lazy Database Pool Initialization
 let pool: mysql.Pool | null = null;
 
 function getPool() {
   if (!pool) {
-    const config = {
-      host: process.env.MYSQL_HOST || 'localhost',
-      user: process.env.MYSQL_USER || 'root',
-      password: process.env.MYSQL_PASSWORD || '',
-      database: process.env.MYSQL_DATABASE || 'RhythmDanceStudio',
-      port: parseInt(process.env.MYSQL_PORT || '3306'),
-      waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0
-    };
-    
-    pool = mysql.createPool(config);
+    const mysqlUrl = process.env.MYSQL_URL;
+    if (mysqlUrl) {
+      pool = mysql.createPool(mysqlUrl);
+    } else {
+      const config = {
+        host: process.env.MYSQL_HOST || 'localhost',
+        user: process.env.MYSQL_USER || 'root',
+        password: process.env.MYSQL_PASSWORD || '',
+        database: process.env.MYSQL_DATABASE || 'RhythmDanceStudio',
+        port: parseInt(process.env.MYSQL_PORT || '3306'),
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0
+      };
+      pool = mysql.createPool(config);
+    }
   }
   return pool;
 }
