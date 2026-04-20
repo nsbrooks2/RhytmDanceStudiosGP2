@@ -206,9 +206,8 @@ export default function App() {
             </ul>
           </div>
           <div>
-            <h3 className="text-sm font-bold text-slate-900 mb-2">Subject</h3>
-            <p className="text-sm text-slate-600">MIS 330: Management Information Systems II</p>
-            <p className="text-sm text-slate-600 font-bold mt-2">Spring 2026 Semester</p>
+            <h3 className="text-sm font-bold text-slate-900 mb-2">Project Classification</h3>
+            <p className="text-sm text-slate-600 font-bold mt-1">Management Information Systems</p>
           </div>
         </div>
       </section>
@@ -233,7 +232,7 @@ export default function App() {
               </div>
               <div className="space-y-2">
                 <p className="font-bold text-blue-900">B. THE PRESENTATION FALLBACK</p>
-                <p>During the MIS 330 presentation, if the database is unreachable, this system will automatically use the <strong>High-Density Mock Dataset</strong> created by the team to ensure the analytics functions properly.</p>
+                <p>During the project presentation, if the database is unreachable, this system will automatically use the <strong>High-Density Mock Dataset</strong> created by the team to ensure the analytics functions properly.</p>
               </div>
             </div>
           </div>
@@ -907,14 +906,10 @@ namespace RhythmDanceStudio {
             <span className="text-slate-900 font-bold capitalize">{activeTab.replace('-', ' ')} Overview</span>
           </div>
           <div className="flex items-center gap-6">
-            <div className="text-right border-r border-slate-200 pr-6">
-              <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Academic Term</div>
-              <div className="text-sm font-black">Spring 2024 (MIS 330)</div>
-            </div>
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
                 <div className="text-xs font-bold">Admin Session</div>
-                <div className="text-[10px] text-slate-400 font-mono">ID: MIS-330-RDS</div>
+                <div className="text-[10px] text-slate-400 font-mono tracking-wider uppercase">Active Enterprise Profile</div>
               </div>
               <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
                 <Users className="w-4 h-4" />
@@ -947,7 +942,7 @@ namespace RhythmDanceStudio {
 
         {/* Bottom System Info Bar */}
         <footer className="h-8 bg-slate-200 border-t border-slate-300 flex items-center px-8 justify-between text-[10px] font-bold text-slate-500 uppercase tracking-widest shrink-0">
-          <span>Session ID: MIS-330-RHYTHM-PRJ-24</span>
+          <span>Session ID: RDS-SECURE-AUTH-24</span>
           <span className="hidden md:inline">Build v1.0.4-STABLE // .NET 8.0 + MySqlConnector</span>
           <span className="text-slate-900">Local Host: 127.0.0.1:3306</span>
         </footer>
